@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>숫자 입력 페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input[type="tel"] {
+            width: calc(100% - 30px);
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .button-container {
+            display: block;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            width: 30%;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button.epic{
+            background-color: #333;
+        }
+
+        button.epic:hover {
+            background-color: grey;
+        }
+
+        button.rand{
+            background-color: #e33f3f;
+        }
+
+        button.rand:hover {
+            background-color: grey;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>숫자를 입력하세요</h1>
+        <input type="tel" id="inputNumber" placeholder="숫자를 입력하세요" oninput="this.value = this.value.replace(/[^0-9]/g, '')" onkeydown="if(event.keyCode == 13) redirectToHtm()">
+        <div class="button-container">
+            <div class="button-row">
+                <button onclick="addNumber(7)">7</button>
+                <button onclick="addNumber(8)">8</button>
+                <button onclick="addNumber(9)">9</button>
+            </div><br>
+            <div class="button-row">
+                <button onclick="addNumber(4)">4</button>
+                <button onclick="addNumber(5)">5</button>
+                <button onclick="addNumber(6)">6</button>
+            </div><br>
+            <div class="button-row">
+                <button onclick="addNumber(1)">1</button>
+                <button onclick="addNumber(2)">2</button>
+                <button onclick="addNumber(3)">3</button>
+            </div><br>
+            <div class="button-row">
+                <button class="epic" onclick="resetInput()">초기화</button>
+                <button onclick="addNumber(0)">0</button>
+                <button class="epic" onclick="redirectToHtm()">이동</button>
+            </div><br>
+            <div>
+                <button class="rand" id="generateButton">랜덤</button> <br><br>
+                ※ 랜덤은 9와 3000000 사이의 숫자가 입력됩니다. <br>
+                사이트 특성상 이동시 빈 페이지가 뜨거나, <br>
+                엄청난게 떠버릴 수 있습니다. <br>
+                결과에 대한 책임은 아무도 져주지 않습니다.
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        function redirectToHtm() {
+            var input = document.getElementById('inputNumber').value;
+            // 입력값이 숫자인지 확인
+            if (!isNaN(input) && input !== '') {
+                var url = 'https://hitomi.la/reader/' + input + '.html';
+                // 새 창으로 이동
+                window.open(url);
+            } else {
+                alert('올바른 숫자를 입력하세요!');
+            }
+        }
+
+        function resetInput() {
+            document.getElementById('inputNumber').value = '';
+        }
+
+        function addNumber(number) {
+            document.getElementById('inputNumber').value += number;
+        }
+        
+        function generateRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        document.getElementById('generateButton').addEventListener('click', function() {
+            resetInput();
+            var randomNumber = generateRandomNumber(9, 3000000);
+            document.getElementById('inputNumber').value = randomNumber;
+        });
+
+    </script>
+</body>
+</html>

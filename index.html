@@ -25,7 +25,55 @@
             color: #333;
         }
 
-        input[type="tel"] {
+        /* 숫자 버튼 스타일 */
+        .number-buttons {
+            display: block;
+            margin-top: 20px;
+        }
+
+        .number-buttons .button-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px; /* 간격 조정 */
+        }
+
+        .number-buttons button {
+            width: 30%;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s ease;
+            height: 50px; /* 높이 통일 */
+            line-height: 1;
+            margin: 0 5px; /* 버튼 간격 추가 */
+        }
+
+        .number-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        .number-buttons button.epic {
+            background-color: #333;
+        }
+
+        .number-buttons button.epic:hover {
+            background-color: grey;
+        }
+
+        .number-buttons button.rand {
+            background-color: #e33f3f;
+        }
+
+        .number-buttons button.rand:hover {
+            background-color: grey;
+        }
+
+        /* 숫자 입력폼 스타일 */
+        .number-input {
             width: calc(100% - 30px);
             padding: 10px;
             margin-top: 10px;
@@ -33,90 +81,166 @@
             border-radius: 5px;
             font-size: 16px;
             box-sizing: border-box;
+            height: 50px; /* 높이 통일 */
         }
 
-        .button-container {
-            display: block;
-            justify-content: space-between;
-            margin-top: 20px;
+        /* 검색 입력폼 스타일 */
+        .search-input {
+            width: calc(70% - 22px);
+            margin-right: 10px;
+            height: 40px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
 
-        button {
+        .search-section {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .search-section h2 {
+            font-size: 24px;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .search-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .search-row button {
             width: 30%;
-            background-color: #007bff;
+            height: 40px;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-row .reset-button {
+            margin-right: 10px;
+            background-color: #333;
             color: #fff;
             border: none;
-            padding: 12px 20px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 20px;
             transition: background-color 0.3s ease;
         }
 
-        button:hover {
+        .search-row .reset-button:hover {
+            background-color: grey;
+        }
+
+        .search-row .search-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-row .search-button:hover {
             background-color: #0056b3;
         }
 
-        button.epic{
-            background-color: #333;
+        .language-container {
+            margin-top: 20px;
+            text-align: left;
         }
 
-        button.epic:hover {
-            background-color: grey;
+        .language-container label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            height: 40px;
+            line-height: 20px; /* 텍스트 중앙 정렬 */
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
         }
 
-        button.rand{
-            background-color: #e33f3f;
+        .language-container label.selected {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
         }
 
-        button.rand:hover {
-            background-color: grey;
+        .language-container label input[type="radio"] {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>숫자를 입력하세요</h1>
-        <input type="tel" id="inputNumber" placeholder="숫자를 입력하세요" oninput="this.value = this.value.replace(/[^0-9]/g, '')" onkeydown="if(event.keyCode == 13) redirectToHtm()">
-        <div class="button-container">
+        <input type="tel" id="inputNumber" class="number-input" placeholder="숫자를 입력하세요" oninput="this.value = this.value.replace(/[^0-9]/g, '')" onkeydown="if(event.keyCode == 13) redirectToHtm()">
+
+        <div class="number-buttons">
             <div class="button-row">
                 <button onclick="addNumber(7)">7</button>
                 <button onclick="addNumber(8)">8</button>
                 <button onclick="addNumber(9)">9</button>
-            </div><br>
+            </div>
             <div class="button-row">
                 <button onclick="addNumber(4)">4</button>
                 <button onclick="addNumber(5)">5</button>
                 <button onclick="addNumber(6)">6</button>
-            </div><br>
+            </div>
             <div class="button-row">
                 <button onclick="addNumber(1)">1</button>
                 <button onclick="addNumber(2)">2</button>
                 <button onclick="addNumber(3)">3</button>
-            </div><br>
+            </div>
             <div class="button-row">
                 <button class="epic" onclick="resetInput()">초기화</button>
                 <button onclick="addNumber(0)">0</button>
                 <button class="epic" onclick="redirectToHtm()">이동</button>
-            </div><br>
+            </div>
             <div>
-                <button class="rand" id="generateButton">랜덤</button> <br><br>
+                <button class="rand" id="generateButton">랜덤</button>
+                <br><br>
                 ※ 랜덤은 9와 3000000 사이의 숫자가 입력됩니다. <br>
                 사이트 특성상 이동시 빈 페이지가 뜨거나, <br>
                 엄청난게 떠버릴 수 있습니다. <br>
                 결과에 대한 책임은 아무도 져주지 않습니다.
             </div>
         </div>
-    </div>
+
+        <div class="search-section">
+            <h2>작가명으로 이동</h2>
+            <div class="search-row">
+                <input type="text" id="searchAuthor" class="search-input" placeholder="작가 이름을 입력하세요" oninput="validateAuthorInput()">
+                <button class="reset-button" onclick="resetSearchInput()">초기화</button>
+                <button class="search-button" onclick="searchAuthor()">이동</button>
+            </div>
+
+            <div class="language-container">
+                <label><input type="radio" name="language" value="-all"> All</label>
+                <label class="selected"><input type="radio" name="language" value="-korean" checked> 한국어</label>
+                <label><input type="radio" name="language" value="-english"> English</label>
+                <label><input type="radio" name="language" value="-japanese"> 日本語</label>
+            </div>
+        </div>
     </div>
 
     <script>
         function redirectToHtm() {
             var input = document.getElementById('inputNumber').value;
-            // 입력값이 숫자인지 확인
             if (!isNaN(input) && input !== '') {
                 var url = 'https://hitomi.la/reader/' + input + '.html';
-                // 새 창으로 이동
                 window.open(url);
             } else {
                 alert('올바른 숫자를 입력하세요!');
@@ -141,6 +265,35 @@
             document.getElementById('inputNumber').value = randomNumber;
         });
 
+        function validateAuthorInput() {
+            var input = document.getElementById('searchAuthor').value;
+            document.getElementById('searchAuthor').value = input.replace(/[^a-zA-Z0-9 .-]/g, '');
+        }
+
+        function searchAuthor() {
+            var authorName = document.getElementById('searchAuthor').value.trim();
+            var language = document.querySelector('input[name="language"]:checked').value;
+            if (authorName === '') {
+                alert('작가명을 입력해 주세요');
+                return;
+            }
+            var formattedName = authorName.replace(/ +$/, '').replace(/ /g, '%20');
+            var url = 'https://hitomi.la/artist/' + formattedName + language + '.html';
+            window.open(url);
+        }
+
+        function resetSearchInput() {
+            document.getElementById('searchAuthor').value = '';
+            document.querySelector('input[name="language"][value="-all"]').checked = true;
+        }
+
+        document.querySelectorAll('.language-container label').forEach(label => {
+            label.addEventListener('click', () => {
+                document.querySelectorAll('.language-container label').forEach(l => l.classList.remove('selected'));
+                label.classList.add('selected');
+                document.querySelector(`input[name="language"][value="${label.querySelector('input').value}"]`).checked = true;
+            });
+        });
     </script>
 </body>
 </html>

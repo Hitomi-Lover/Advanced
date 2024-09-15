@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>태그 지정 검색 도구</title>
+    <style>
+        /* 기존 CSS 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            user-select: none; /* 마우스 드래그로 텍스트 선택 방지 */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .tag-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2x2 배열 */
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tag-section, .preset-controls {
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tag-section h2 {
+            margin-top: 0;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            user-select: none; /* 마우스 드래그로 텍스트 선택 방지 */
+        }
+
+        .tag[data-state="include"] {
+            background-color: lightgreen;
+        }
+
+        .tag[data-state="exclude"] {
+            background-color: lightcoral;
+        }
+
+        .controls{
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* 버튼 간의 간격 */
+            margin-top: 30px;
+        }
+
+        .controls button, .preset-controls button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #searchBtn, #saveBtn, #loadBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #searchBtn:hover, #saveBtn:hover, #loadBtn:hover {
+            background-color: #45a049;
+        }
+
+        #resetBtn, #deleteBtn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        #resetBtn:hover, #deleteBtn:hover {
+            background-color: #e53935;
+        }
+
+        .preset-controls input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .preset-controls select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .preset-controls {
+            text-align: center;
+        }
+
+        #presetDropdown {
+            width: 50%;
+        }
+
+        .female {
+            color: red;
+            text-shadow:
+            1px 1px 0 #ffffff, /* 첫 번째 그림자 (가장자리) */
+            -1px -1px 0 #ffffff, /* 두 번째 그림자 (가장자리) */
+            1px -1px 0 #ffffff, /* 세 번째 그림자 (가장자리) */
+            -1px 1px 0 #ffffff, /* 네 번째 그림자 (가장자리) */
+            0 0 5px rgba(255, 255, 255, 0.5); /* 추가적인 흐림 효과 */
+            }
+
+        .male {
+        color: blue;
+        text-shadow:
+        1px 1px 0 #ffffff, /* 첫 번째 그림자 (가장자리) */
+        -1px -1px 0 #ffffff, /* 두 번째 그림자 (가장자리) */
+        1px -1px 0 #ffffff, /* 세 번째 그림자 (가장자리) */
+        -1px 1px 0 #ffffff, /* 네 번째 그림자 (가장자리) */
+        0 0 5px rgba(255, 255, 255, 0.5); /* 추가적인 흐림 효과 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>태그 지정 검색 도구</h1>
+        <!-- 태그 섹션 그리드 -->
+        <div class="tag-grid">
+            <!-- 언어 태그 섹션 -->
+            <div class="tag-section" id="languageTags">
+                <h2>언어 태그</h2>
+                <div class="tag-container">
+                    <div class="tag" data-tag="-all">지정없음</div>
+                    <div class="tag" data-tag="language%3Akorean" data-state="include">한국어</div>
+                    <div class="tag" data-tag="language%3Ajapanese">일본어</div>
+                    <div class="tag" data-tag="language%3Aenglish">영어</div>
+                    <div class="tag" data-tag="language%3Achinese">중국어</div>
+                </div>
+            </div>
+
+            <!-- 작품 유형 태그 섹션 -->
+            <div class="tag-section" id="contentTypeTags">
+                <h2>작품 유형 태그</h2>
+                <div class="tag-container">
+                    <div class="tag" data-tag="type%3Adoujinshi">동인지</div>
+                    <div class="tag" data-tag="type%3Amanga">만화</div>
+                    <div class="tag" data-tag="type%3Aartistcg">아티스트 CG</div>
+                    <div class="tag" data-tag="type%3Agamecg">게임 CG</div>
+                    <div class="tag" data-tag="type%3Aimageset">이미지셋</div>
+                    <div class="tag" data-tag="type%3Aanime">아니메</div>
+                    * 주의 : or 검색 안됩니다. (ex 동인지 또는 만화 이렇게 안됨)
+                </div>
+            </div>
+
+            <!-- 주요 태그 섹션 -->
+            <div class="tag-section" id="primaryTags">
+                <h2>주요 태그</h2>
+                <div class="tag-container">
+                    <div class="tag" data-tag="female%3Aloli">롤리</div>
+                    <div class="tag" data-tag="male%3Ashota">쇼타</div>
+                    <div class="tag" data-tag="tag%3Aincest">근친</div>
+                    <div class="tag" data-tag="tag%3Atime_stop">시간정지</div>
+                    <div class="tag female" data-tag="female%3Amind_control">최면</div>
+                    <div class="tag male" data-tag="male%3Amind_control">최면</div>
+                    <div class="tag female" data-tag="female%3Arape">광관</div>
+                    <div class="tag male" data-tag="male%3Arape">광관</div>
+                    <div class="tag female" data-tag="female%3Anetorare">NTR</div>
+                    <div class="tag male" data-tag="male%3Anetorare">NTR</div>
+                    <div class="tag female" data-tag="female%3Afurry">퍼리</div>
+                    <div class="tag male" data-tag="male%3Afurry">퍼리</div>
+                    <div class="tag" data-tag="female%3Asister">sister</div>
+                    <div class="tag" data-tag="male%3Abrother">brother</div>
+                    <div class="tag" data-tag="female%3Ayuri">백합</div>
+                    <div class="tag" data-tag="male%3Ayaoi">야오이</div>
+                    <div class="tag " data-tag="female%3Amilf">유부녀</div>
+                    <div class="tag" data-tag="female%3Aryona">료나</div>
+                    <div class="tag" data-tag="female%3Afutanari">후타나리</div>
+                    <div class="tag" data-tag="female%3Agyaru">갸루</div>
+                    <div class="tag" data-tag="female%3Aprostitution">창녀</div>
+                    <div class="tag" data-tag="female%3Adark_skin">갈색피부</div>
+                </div>
+            </div>
+
+            <!-- 옵션 태그 섹션 -->
+            <div class="tag-section" id="optionTags">
+                <h2>옵션 태그</h2>
+                <div class="tag-container">
+                    <div class="tag" data-tag="tag%3Afull_censorship">완전검열</div>
+                    <div class="tag" data-tag="tag%3Amosaic_censorship">모자이크</div>
+                    <div class="tag" data-tag="tag%3Auncensored">무수정</div>
+                    <div class="tag" data-tag="orderbydirection%3Arandom">랜덤정렬</div>
+                </div>
+            </div>
+        </div>        
+
+
+        <!-- 검색 및 초기화 버튼 -->
+        <div class="controls">
+            <button id="searchBtn">검색</button>
+            <button id="resetBtn">초기화</button>
+        </div>
+        <br>
+
+        <!-- 프리셋 관련 UI -->
+        <div class="preset-controls">
+            <select id="presetDropdown">
+                <option value="">프리셋 선택</option>
+            </select>
+            <input type="text" id="presetName" placeholder="프리셋 이름 (최대 10자)" maxlength="10">
+            <br><br>
+            <button id="saveBtn">저장</button>
+            <button id="loadBtn">불러오기</button>
+            <button id="deleteBtn">삭제</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const tags = document.querySelectorAll('.tag');
+
+            // 태그 클릭 이벤트 설정
+            tags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const currentState = tag.getAttribute('data-state');
+
+                    if (!currentState || currentState === 'none') {
+                        tag.setAttribute('data-state', 'include');
+                    } else if (currentState === 'include') {
+                        tag.setAttribute('data-state', 'exclude');
+                    } else {
+                        tag.setAttribute('data-state', 'none');
+                    }
+                    updateTagStyles(tag);
+                    saveTagsToLocalStorage();
+                });
+            });
+
+            // 태그 스타일 업데이트 함수
+            function updateTagStyles(tag) {
+                const currentState = tag.getAttribute('data-state');
+                if (currentState === 'include') {
+                    tag.style.backgroundColor = 'lightgreen';
+                } else if (currentState === 'exclude') {
+                    tag.style.backgroundColor = 'lightcoral';
+                } else {
+                    tag.style.backgroundColor = '';
+                }
+            }
+
+            // 로컬스토리지에 태그 상태 저장
+            function saveTagsToLocalStorage() {
+                const tagStates = {};
+                tags.forEach(tag => {
+                    tagStates[tag.getAttribute('data-tag')] = tag.getAttribute('data-state');
+                });
+                localStorage.setItem('tagStates', JSON.stringify(tagStates));
+            }
+
+            // 로컬스토리지에서 태그 상태 불러오기
+            function loadTagsFromLocalStorage() {
+                const tagStates = JSON.parse(localStorage.getItem('tagStates'));
+                if (tagStates) {
+                    tags.forEach(tag => {
+                        const state = tagStates[tag.getAttribute('data-tag')];
+                        if (state) {
+                            tag.setAttribute('data-state', state);
+                            updateTagStyles(tag);
+                        }
+                    });
+                }
+            }
+
+            // 프리셋 업데이트
+            function updatePresetDropdown() {
+                const dropdown = document.getElementById('presetDropdown');
+                dropdown.innerHTML = '<option value="">프리셋 선택</option>';
+                const presets = JSON.parse(localStorage.getItem('presets')) || {};
+                Object.keys(presets).forEach(presetName => {
+                    const option = document.createElement('option');
+                    option.value = presetName;
+                    option.textContent = presetName;
+                    dropdown.appendChild(option);
+                });
+            }
+
+            // 프리셋 저장
+            document.getElementById('saveBtn').addEventListener('click', function() {
+                const presetName = document.getElementById('presetName').value.trim();
+                if (presetName.length === 0) {
+                    alert('프리셋 이름을 입력해 주세요.');
+                    return;
+                }
+
+                const presets = JSON.parse(localStorage.getItem('presets')) || {};
+                let name = presetName;
+                let counter = 1;
+                while (presets[name]) {
+                    name = `${presetName} (${counter})`;
+                    counter++;
+                }
+
+                presets[name] = {};
+                tags.forEach(tag => {
+                    presets[name][tag.getAttribute('data-tag')] = tag.getAttribute('data-state');
+                });
+
+                localStorage.setItem('presets', JSON.stringify(presets));
+                updatePresetDropdown();
+                document.getElementById('presetName').value = '';
+            });
+
+            // 프리셋 불러오기
+            document.getElementById('loadBtn').addEventListener('click', function() {
+                const presetName = document.getElementById('presetDropdown').value;
+                if (!presetName) {
+                    alert('불러올 프리셋을 선택해 주세요.');
+                    return;
+                }
+
+                const presets = JSON.parse(localStorage.getItem('presets')) || {};
+                const preset = presets[presetName];
+                if (preset) {
+                    tags.forEach(tag => {
+                        const state = preset[tag.getAttribute('data-tag')];
+                        if (state) {
+                            tag.setAttribute('data-state', state);
+                            updateTagStyles(tag);
+                        }
+                    });
+                }
+            });
+
+            // 프리셋 삭제
+            document.getElementById('deleteBtn').addEventListener('click', function() {
+                const presetName = document.getElementById('presetDropdown').value;
+                if (!presetName) {
+                    alert('삭제할 프리셋을 선택해 주세요.');
+                    return;
+                }
+
+                const presets = JSON.parse(localStorage.getItem('presets')) || {};
+                delete presets[presetName];
+                localStorage.setItem('presets', JSON.stringify(presets));
+                updatePresetDropdown();
+            });
+
+            // 초기화 버튼 클릭 이벤트
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                tags.forEach(tag => {
+                    tag.setAttribute('data-state', 'none');
+                    updateTagStyles(tag);
+                });
+                localStorage.removeItem('tagStates');
+            });
+
+            // 검색 버튼 클릭 이벤트
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                const baseUrl = 'https://hitomi.la/search.html?';
+                let query = '';
+                let hasSelectedTag = false; // 태그 선택 여부 확인 변수
+
+                tags.forEach(tag => {
+                    const state = tag.getAttribute('data-state');
+                    const tagName = tag.getAttribute('data-tag');
+                    if (state === 'include') {
+                        query += `${tagName}%20`;
+                        hasSelectedTag = true; // 'include' 상태의 태그가 있음을 확인
+                    } else if (state === 'exclude') {
+                        query += `-${tagName}%20`;
+                        hasSelectedTag = true; // 'exclude' 상태의 태그가 있음을 확인
+                    }
+                });
+
+                if (!hasSelectedTag) {
+                    alert('적어도 한 개 이상의 태그 지정을 해주세요.');
+                    return;
+                }
+
+                query = query.slice(0, -3); // 마지막 '%20' 제거
+                const searchUrl = baseUrl + query;
+                window.open(searchUrl, '_blank');
+            });
+            // 초기 로드
+            loadTagsFromLocalStorage();
+            updatePresetDropdown();
+        });
+
+    </script>
+</body>
+</html>

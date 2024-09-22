@@ -325,7 +325,6 @@
     </div>
 
     <script>
-
         function clearSearchHistory() {
             if (confirm('정말로 모든 검색 이력을 삭제하시겠습니까?')) {
                 localStorage.removeItem('searchHistory'); // 로컬 스토리지에서 검색 이력 삭제
@@ -351,16 +350,6 @@
             document.getElementById('inputNumber').value += number;
         }
         
-        function generateRandomNumber(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-
-        document.getElementById('generateButton').addEventListener('click', function() {
-            resetInput();
-            var randomNumber = generateRandomNumber(9, 3000000);
-            document.getElementById('inputNumber').value = randomNumber;
-        });
-
         function validateAuthorInput() {
             var input = document.getElementById('searchAuthor').value;
             document.getElementById('searchAuthor').value = input.replace(/[^a-zA-Z0-9 .-]/g, '');
@@ -383,14 +372,12 @@
             document.querySelector('input[name="language"][value="-all"]').checked = true;
         }
 
-        document.querySelectorAll('.language-container label').forEach(label => {
-            label.addEventListener('click', () => {
-                document.querySelectorAll('.language-container label').forEach(l => l.classList.remove('selected'));
-                label.classList.add('selected');
-                document.querySelector(`input[name="language"][value="${label.querySelector('input').value}"]`).checked = true;
+        document.querySelectorAll('.language-container input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                document.querySelectorAll('.language-container label').forEach(label => label.classList.remove('selected'));
+                radio.closest('label').classList.add('selected');
             });
         });
-
         const maxHistoryCount = 20;
         let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
 

@@ -152,6 +152,8 @@
         .language-container {
             margin-top: 20px;
             text-align: left;
+            display: flex;
+            gap: 5px;
         }
 
         .language-container label {
@@ -166,10 +168,10 @@
             font-size: 16px;
             transition: background-color 0.3s ease, border-color 0.3s ease;
             height: 40px;
+            width: 100%;
             line-height: 20px; /* 텍스트 중앙 정렬 */
             box-sizing: border-box;
-            display: flex;
-            align-items: center;
+            text-align: center;
         }
 
         .language-container label.selected {
@@ -184,6 +186,89 @@
 
         .features {
             text-align: right;
+        }
+
+        /* 검색 이력 섹션 스타일 */
+        .history-section {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        /* 검색 이력 목록 스타일 */
+        #historyList {
+            display: flex;
+            flex-wrap: wrap;
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        #historyList li {
+            width: 42%; /* 가로 크기를 절반으로 */
+            margin: 1%; /* 여백 추가 */
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .delete-button {
+            background-color: #e33f3f;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+            font-size: 14px;
+        }
+
+        .delete-button:hover {
+            background-color: grey;
+        }
+
+        .search-history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        }
+
+        .reset-history-button {
+            background-color: #e33f3f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .reset-history-button:hover {
+            background-color: grey;
+        }
+
+        .tagsearch {
+            position: absolute;
+            height: 50px;
+            width: 50px;
+            line-height: 50px;
+            top: 10px;
+            right: 10px;
+            border-radius: 50px;
+            background-color: #333;
+            opacity: 0.6;
+            color: white;
+            cursor: pointer;
+        }
+
+        .tagsearch:hover{
+            opacity: 1;
+            transition: opacity 0.3s ease;
         }
     </style>
 </head>
@@ -213,22 +298,14 @@
                 <button onclick="addNumber(0)">0</button>
                 <button class="epic" onclick="redirectToHtm()">이동</button>
             </div>
-            <div>
-                <button class="rand" id="generateButton">랜덤</button>
-                <br><br>
-                ※ 랜덤은 9와 3000000 사이의 숫자가 입력됩니다. <br>
-                사이트 특성상 이동시 빈 페이지가 뜨거나, <br>
-                엄청난게 떠버릴 수 있습니다. <br>
-                결과에 대한 책임은 아무도 져주지 않습니다.
-            </div>
         </div>
 
         <div class="search-section">
-            <h2>작가명으로 이동</h2>
+            <h2>작가명으로 검색</h2>
             <div class="search-row">
                 <input type="text" id="searchAuthor" class="search-input" placeholder="작가 이름을 입력하세요" oninput="validateAuthorInput()">
                 <button class="reset-button" onclick="resetSearchInput()">초기화</button>
-                <button class="search-button" onclick="searchAuthor()">이동</button>
+                <button class="search-button" onclick="searchAuthor()">검색</button>
             </div>
 
             <div class="language-container">
@@ -238,10 +315,24 @@
                 <label><input type="radio" name="language" value="-japanese"> 日本語</label>
             </div>
         </div>
-        <div class="features"><button class="tagmanager" onclick="location.href='tagmanager.html'">Tagmanager</button></div>
+        <div class="tagsearch" onclick="location.href='tagmanager.html'">TAG</div>
+
+        <div class="history-section">
+            <button id="clearHistoryButton" class="reset-history-button" onclick="clearSearchHistory()">검색이력 초기화</button>
+            <h2>검색 이력</h2> 
+            <ul id="historyList" class="history-list"></ul>
+        </div>
     </div>
 
     <script>
+
+        function clearSearchHistory() {
+            if (confirm('정말로 모든 검색 이력을 삭제하시겠습니까?')) {
+                localStorage.removeItem('searchHistory'); // 로컬 스토리지에서 검색 이력 삭제
+                searchHistory = []; // 검색 이력 배열 초기화
+                renderSearchHistory(); // 화면 갱신
+            }
+        }
         function redirectToHtm() {
             var input = document.getElementById('inputNumber').value;
             if (!isNaN(input) && input !== '') {
@@ -299,6 +390,97 @@
                 document.querySelector(`input[name="language"][value="${label.querySelector('input').value}"]`).checked = true;
             });
         });
+
+        const maxHistoryCount = 20;
+        let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+
+        function renderSearchHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+
+            searchHistory.forEach((item, index) => {
+                const li = document.createElement('li');
+
+                // 언어 표기 형식에 맞춰 변환
+                let languageSuffix = '';
+                switch (item.language) {
+                    case '-korean': languageSuffix = '_K'; break;
+                    case '-english': languageSuffix = '_E'; break;
+                    case '-japanese': languageSuffix = '_J'; break;
+                    case '-all': languageSuffix = '_All'; break;
+                }
+
+                // 작가명을 최대 15자로 자름
+                const truncatedAuthor = item.author.length > 12 ? item.author.slice(0, 12) + '...' : item.author;
+                li.textContent = `${truncatedAuthor}${languageSuffix}`;
+
+                // 삭제 버튼 생성 및 클릭 이벤트 추가
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'x';
+                deleteButton.classList.add('delete-button');
+                deleteButton.onclick = (event) => {
+                    event.stopPropagation(); // 클릭 이벤트가 li까지 전달되지 않도록 막기
+                    deleteHistoryItem(index);
+                };
+
+                li.appendChild(deleteButton);
+                li.onclick = () => searchAuthor(item.author, item.language); // 검색 기능
+                historyList.appendChild(li);
+                });
+        }
+
+        // 검색 함수 수정: 검색 이력 저장
+        function searchAuthor(author = null, language = null) {
+            let authorName = author || document.getElementById('searchAuthor').value.trim();
+            let selectedLanguage = language || document.querySelector('input[name="language"]:checked').value;
+
+            if (authorName === '') {
+                alert('작가명을 입력해 주세요');
+                return;
+            }
+
+            // 검색 이력 저장
+            addSearchHistory(authorName, selectedLanguage);
+
+            const formattedName = authorName.replace(/ +$/, '').replace(/ /g, '%20');
+            const url = `https://hitomi.la/artist/${formattedName}${selectedLanguage}.html`;
+            window.open(url);
+        }
+
+        // 검색 이력 저장 함수
+        function addSearchHistory(author, language) {
+            const historyItem = { author, language };
+
+            // 중복 이력 방지
+            searchHistory = searchHistory.filter(item => item.author !== author || item.language !== language);
+
+            // 이력 추가
+            searchHistory.unshift(historyItem);
+
+            // 최대 이력 개수 초과 시 오래된 것 삭제
+            if (searchHistory.length > maxHistoryCount) {
+                searchHistory.pop();
+            }
+
+            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+            renderSearchHistory();
+        }
+
+        // 검색 이력 삭제 함수
+        function deleteHistoryItem(index) {
+            searchHistory.splice(index, 1); // 해당 인덱스 항목 삭제
+            localStorage.setItem('searchHistory', JSON.stringify(searchHistory)); // 변경된 이력 저장
+            renderSearchHistory(); // UI 업데이트
+        }
+
+        // 초기화 함수
+        function resetSearchInput() {
+            document.getElementById('searchAuthor').value = '';
+            document.querySelector('input[name="language"][value="-all"]').checked = true;
+        }
+
+        // 페이지 로드 시 검색 이력 렌더링
+        document.addEventListener('DOMContentLoaded', renderSearchHistory);
     </script>
 </body>
 </html>

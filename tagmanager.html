@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>태그 지정 검색 도구</title>
     <style>
-        /* 기존 CSS 스타일 */
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
@@ -32,10 +31,6 @@
             grid-template-rows: auto auto;
             gap: 10px;
             margin-bottom: 10px;
-        }
-
-        #primaryTags {
-            grid-column: span 2;
         }
 
         .tag-section, .preset-controls {
@@ -125,7 +120,7 @@
             border-radius: 5px;
         }
 
-        .preset-controls select {
+        .preset-controls select, .tag-section select {
             padding: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -148,27 +143,6 @@
         #presetDropdown {
             width: 50%;
         }
-
-        .female {
-            color: red;
-            text-shadow:
-            1px 1px 0 #ffffff, /* 첫 번째 그림자 (가장자리) */
-            -1px -1px 0 #ffffff, /* 두 번째 그림자 (가장자리) */
-            1px -1px 0 #ffffff, /* 세 번째 그림자 (가장자리) */
-            -1px 1px 0 #ffffff, /* 네 번째 그림자 (가장자리) */
-            0 0 5px rgba(255, 255, 255, 0.5); /* 추가적인 흐림 효과 */
-        }
-
-        .male {
-            color: blue;
-            text-shadow:
-            1px 1px 0 #ffffff, /* 첫 번째 그림자 (가장자리) */
-            -1px -1px 0 #ffffff, /* 두 번째 그림자 (가장자리) */
-            1px -1px 0 #ffffff, /* 세 번째 그림자 (가장자리) */
-            -1px 1px 0 #ffffff, /* 네 번째 그림자 (가장자리) */
-            0 0 5px rgba(255, 255, 255, 0.5); /* 추가적인 흐림 효과 */
-        }
-
         .hidden-help {
             display: none;
             position: absolute;
@@ -184,6 +158,27 @@
             position: absolute;
             top: 5px;
             right: 5px;
+        }
+
+        #primaryTags {
+            display: grid;
+            gap: 2px;
+            grid-column: span 1;
+            padding-top: 15px;
+        }
+
+        #actualTags {
+            padding-top: 15px;
+        }
+
+        .soon {
+            width : 110px;
+            text-align: center;
+            height: 30px;
+            border-radius: 10px;
+            border: 0;
+            cursor: pointer;
+            background-color: #ffc9c8;
         }
     </style>
     <script>
@@ -209,10 +204,11 @@
         클릭 할 때 마다 흰-초-빨이 로테이션으로 바뀝니다. <br><br>
         언어태그, 옵션태그, 작품 유형 태그의 경우 '포함' 상태를 두가지 이상으로 지정하면
         제대로 된 결과가 나오지 않으므로 유의해 주세요 (제외는 여러개 적용 가능)<br><br>
-        태그 글자색깔은 성별을 의미합니다. 성별구분이 필요한 태그일지라도 수요가 적은 것은
-        기본값을 '여성'으로 설정해 두기도 했습니다. (ex 료나는 male도 있지만 제외함) <br><br>
-        업데이트로 인해 기존의 프리셋이 다 사라질 수도 있습니다. 추후 저장된 프리셋을
-        텍스트파일로 저장하고 불러올 수 있는 기능도 추가해 볼까 합니다. (미정)
+        업데이트로 인해 기존의 프리셋이 다 사라질 수도 있습니다. <br><br>
+        추가 업데이트를 통해 태그리스트를 카테고라이즈화, 선택한 태그가 우측 하단 섹션에
+        뜨도록 만들었습니다. 태그 밴을 하고싶으면 일단 좌측에서 선택한 후, 우측에서 한번 더 누르면
+        빨간색으로 바뀌어서 제외태그 설정이 되도록 하였습니다. <br><br>
+        기술력 부족으로 인해 우측에 표시되는 태그는 날것 그대로이나 읽어보면 무슨내용인지 알 수 있습니다. 
     </div>
     <div class="container">
         <h2>태그 지정 검색 도구</h2>
@@ -264,44 +260,86 @@
 
             <!-- 주요 태그 섹션 -->
             <div class="tag-section" id="primaryTags">
-                <h3>주요 태그</h3>
+                <h3>태그 리스트</h3>
+                <label for="tagDropdown0"> 연령관련 태그 </label>
+                <select id="tagDropdown0">
+                    <option value="" disabled selected>태그를 선택하세요.</option>
+                    <option value="female%3Aloli">로리</option>
+                    <option value="male%3Ashota">쇼타</option>
+                </select>
+                <br>
+                <label for="tagDropdown"> 상태관련 태그 </label>
+                <select id="tagDropdown">
+                    <option value="" disabled selected>태그를 선택하세요.</option>
+                    <option value="tag%3Atime_stop">시간정지</option>
+                    <option value="female%3Amind_control">최면(여)</option>
+                    <option value="male%3Amind_control">최면(남)</option>
+                    <option value="female%3Asleeping">수면(여)</option>
+                    <option value="male%3Asleeping">수면(남)</option>
+                    <option value="female%3Adrugs">약물(여)</option>
+                    <option value="male%3Adrugs">약물(남)</option>
+                    <option value="female%3Achloroform">마취(여)</option>
+                    <option value="male%3Achloroform">마취(남)</option>
+                </select>
+                <br>
+                <label for="tagDropdown2"> 상황관련 태그 </label>
+                <select id="tagDropdown2">
+                    <option value="" disabled selected>태그를 선택하세요.</option>
+                    <option value="female%3Arape">강간(여)</option>
+                    <option value="male%3Arape">강간(남)</option>
+                    <option value="female%3Anetorare">NTR(여)</option>
+                    <option value="male%3Anetorare">NTR(남)</option>
+                    <option value="female%3Aryona">료나(여)</option>
+                    <option value="male%3Aryona">료나(남)</option>
+                    <option value="female%3Acheating">불륜(여)</option>
+                    <option value="male%3Acheating">불륜(남)</option>
+                </select>
+                <br>
+                <label for="tagDropdown3"> 관계성 태그 </label>
+                <select id="tagDropdown3">
+                    <option value="" disabled selected>태그를 선택하세요.</option>
+                    <option value="tag%3Aincest">근친</option>
+                    <option value="female%3Asister">누나언니여동생</option>
+                    <option value="male%3Abrother">형오빠남동생</option>
+                    <option value="female%3Ayuri">백합</option>
+                    <option value="male%3Ayaoi">야오이</option>
+                    <option value="female%3Afamdom">펨돔(여성상위)</option>
+                    <option value="female%3Adaughter">딸</option>
+                    <!-- 필요한 태그를 추가하세요 -->
+                </select>
+                <br>
+                <label for="tagDropdown4"> 속성관련 태그 </label>
+                <select id="tagDropdown4">
+                    <option value="" disabled selected>태그를 선택하세요.</option>
+                    <option value="female%3Amilf">유부녀</option>
+                    <option value="female%3Afurry">퍼리(여)</option>
+                    <option value="male%3Afurry">퍼리(남)</option>
+                    <option value="female%3Amesugaki">메스가키</option>
+                    <option value="female%3Agyaru">갸루</option>
+                    <option value="female%3Aprostitution">창녀</option>
+                    <option value="male%3Agender_change">TS(남->여)</option>
+                    <option value="male%3Acrossdressing">여장</option>
+                    <option value="female%3Aslave">노예(여)</option>
+                    <option value="male%3Aslave">노예(남)</option>
+                </select>
+                <br>
+                <label for="tagDropdown5"> 신체관련 태그 </label>
+                <select id="tagDropdown5">
+                    <option value="" disabled selected>태그를 선택하세요.</option>
+                    <option value="female%3Afutanari">후타나리</option>
+                    <option value="female%3Adark_skin">갈색피부(여)</option>
+                    <option value="female%3Abig_penis">거근(여)</option>
+                    <option value="male%3Abig_penis">거근(남)</option>
+                    <option value="female%3Abig_breasts">거유(여)</option>
+                    <option value="female%3Asmall_breasts">빈유(여)</option>
+                </select>
+                <br>
+                <button class="soon" onclick="location.href='https://hitomi.la/search.html?female%3Adefloration%20-female%3Anetorare%20-female%3Amilf%20-female%3Abbw%20-male%3Abbm%20-tag%3Ammf_threesome%20-female%3Acheating%20-male%3Acheating%20-female%3Ascat%20-male%3Ascat%20-female%3Aguro%20-male%3Aguro%20-female%3Asnuff%20-male%3Asnuff%20-female%3Ablackmail%20-female%3Adouble_penetration%20-male%3Afurry%20-female%3Afurry%20-male%3Ayaoi%20-male%3Aold_man%20-female%3Abestiality%20-male%3Abestiality%20-female%3Afutanari%20-female%3Adaughter%20-male%3Afather%20-female%3Amother%20-male%3Abald%20-male%3Adilf%20-female%3Aslave%20-female%3Amind_break%20language%3Akorean'">순애 프리셋</button>
+            </div>
+
+            <div class="tag-section" id="actualTags">
+                <h3>선택한 태그</h3>
                 <div class="tag-container">
-                    <div class="tag" data-tag="female%3Aloli">롤리</div>
-                    <div class="tag" data-tag="male%3Ashota">쇼타</div>
-                    <div class="tag" data-tag="tag%3Aincest">근친</div>
-                    <div class="tag" data-tag="tag%3Atime_stop">시간정지</div>
-                    <div class="tag female" data-tag="female%3Amind_control">최면</div>
-                    <div class="tag male" data-tag="male%3Amind_control">최면</div>
-                    <div class="tag female" data-tag="female%3Arape">광관</div>
-                    <div class="tag male" data-tag="male%3Arape">광관</div>
-                    <div class="tag female" data-tag="female%3Anetorare">NTR</div>
-                    <div class="tag male" data-tag="male%3Anetorare">NTR</div>
-                    <div class="tag female" data-tag="female%3Afurry">퍼리</div>
-                    <div class="tag male" data-tag="male%3Afurry">퍼리</div>
-                    <div class="tag" data-tag="female%3Asister">sister</div>
-                    <div class="tag" data-tag="male%3Abrother">brother</div>
-                    <div class="tag" data-tag="female%3Ayuri">백합</div>
-                    <div class="tag" data-tag="male%3Ayaoi">야오이</div>
-                    <div class="tag " data-tag="female%3Amilf">유부녀</div>
-                    <div class="tag" data-tag="female%3Aryona">료나</div>
-                    <div class="tag" data-tag="female%3Afutanari">후타나리</div>
-                    <div class="tag" data-tag="female%3Agyaru">갸루</div>
-                    <div class="tag" data-tag="female%3Aprostitution">창녀</div>
-                    <div class="tag" data-tag="female%3Adark_skin">갈색피부</div>
-                    <div class="tag female" data-tag="female%3Adrugs">약물</div>
-                    <div class="tag male" data-tag="male%3Adrugs">약물</div>
-                    <div class="tag female" data-tag="female%3Achloroform">마취</div>
-                    <div class="tag male" data-tag="male%3Achloroform">마취</div>
-                    <div class="tag" data-tag="female%3Afamdom">펨돔</div>
-                    <div class="tag" data-tag="male%3Acrossdressing">여장</div>
-                    <div class="tag female" data-tag="female%3Abig_penis">거근</div>
-                    <div class="tag male" data-tag="male%3Abig_penis">거근</div>
-                    <div class="tag" data-tag="female%3Abig_breasts">거유</div>
-                    <div class="tag" data-tag="female%3Asmall_breasts">빈유</div>
-                    <div class="tag" data-tag="female%3Amesugaki">메스가키</div>
-                    <div class="tag" data-tag="male%3Agender_change">TS(남->여)</div>
-                    <div class="tag female" data-tag="female%3Asleeping">수면</div>
-                    <div class="tag male" data-tag="male%3Asleeping">수면</div>
                 </div>
             </div>
         </div>        
@@ -318,7 +356,126 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const tags = document.querySelectorAll('.tag');
+            const tags = document.querySelectorAll('.tag:not(.gentags)'); // 기존 태그 선택
+            const tagContainer = document.querySelector('#actualTags .tag-container'); // 드롭다운 생성 태그 컨테이너
+
+            document.getElementById('tagDropdown').addEventListener('change', function() {
+                const selectedValue = this.value;
+
+                // 중복 태그 확인
+                const existingTags = document.querySelectorAll('#actualTags .tag.gentags');
+                for (let tag of existingTags) {
+                    if (tag.getAttribute('data-tag') === selectedValue) {
+                        return; // 이미 있는 태그는 추가하지 않음
+                    }
+                }
+
+                // 새로운 태그 생성
+                createNewTag(selectedValue);
+            });
+
+            document.getElementById('tagDropdown2').addEventListener('change', function() {
+                const selectedValue = this.value;
+
+                // 중복 태그 확인
+                const existingTags = document.querySelectorAll('#actualTags .tag.gentags');
+                for (let tag of existingTags) {
+                    if (tag.getAttribute('data-tag') === selectedValue) {
+                        return; // 이미 있는 태그는 추가하지 않음
+                    }
+                }
+
+                // 새로운 태그 생성
+                createNewTag(selectedValue);
+            });
+
+            document.getElementById('tagDropdown0').addEventListener('change', function() {
+                const selectedValue = this.value;
+
+                // 중복 태그 확인
+                const existingTags = document.querySelectorAll('#actualTags .tag.gentags');
+                for (let tag of existingTags) {
+                    if (tag.getAttribute('data-tag') === selectedValue) {
+                        return; // 이미 있는 태그는 추가하지 않음
+                    }
+                }
+
+                // 새로운 태그 생성
+                createNewTag(selectedValue);
+            });
+
+            document.getElementById('tagDropdown3').addEventListener('change', function() {
+                const selectedValue = this.value;
+
+                // 중복 태그 확인
+                const existingTags = document.querySelectorAll('#actualTags .tag.gentags');
+                for (let tag of existingTags) {
+                    if (tag.getAttribute('data-tag') === selectedValue) {
+                        return; // 이미 있는 태그는 추가하지 않음
+                    }
+                }
+
+                // 새로운 태그 생성
+                createNewTag(selectedValue);
+            });
+
+            document.getElementById('tagDropdown4').addEventListener('change', function() {
+                const selectedValue = this.value;
+
+                // 중복 태그 확인
+                const existingTags = document.querySelectorAll('#actualTags .tag.gentags');
+                for (let tag of existingTags) {
+                    if (tag.getAttribute('data-tag') === selectedValue) {
+                        return; // 이미 있는 태그는 추가하지 않음
+                    }
+                }
+
+                // 새로운 태그 생성
+                createNewTag(selectedValue);
+            });
+
+            document.getElementById('tagDropdown5').addEventListener('change', function() {
+                const selectedValue = this.value;
+
+                // 중복 태그 확인
+                const existingTags = document.querySelectorAll('#actualTags .tag.gentags');
+                for (let tag of existingTags) {
+                    if (tag.getAttribute('data-tag') === selectedValue) {
+                        return; // 이미 있는 태그는 추가하지 않음
+                    }
+                }
+
+                // 새로운 태그 생성
+                createNewTag(selectedValue);
+            });
+
+            // 태그 생성 함수
+            function createNewTag(tagName) {
+                const newTag = document.createElement('div');
+                newTag.classList.add('tag', 'gentags'); // gentags 클래스 추가
+                newTag.setAttribute('data-tag', tagName);
+                newTag.setAttribute('data-state', 'include'); // 기본 상태 설정
+                newTag.innerText = tagName; // 태그 표시 이름
+
+                // 클릭 이벤트 추가
+                newTag.addEventListener('click', function() {
+                    const currentState = newTag.getAttribute('data-state');
+
+                    if (!currentState || currentState === 'none') {
+                        newTag.setAttribute('data-state', 'include');
+                    } else if (currentState === 'include') {
+                        newTag.setAttribute('data-state', 'exclude');
+                    } else {
+                        newTag.setAttribute('data-state', 'none');
+                    }
+                    updateTagStyles(newTag);
+                    saveTagsToLocalStorage(); // 상태 저장
+                });
+
+                // 태그 컨테이너에 추가
+                tagContainer.appendChild(newTag);
+                saveTagsToLocalStorage(); // 태그 추가 후 상태 저장
+            }
 
             // 태그 클릭 이벤트 설정
             tags.forEach(tag => {
@@ -352,25 +509,36 @@
             // 로컬스토리지에 태그 상태 저장
             function saveTagsToLocalStorage() {
                 const tagStates = {};
-                tags.forEach(tag => {
-                    tagStates[tag.getAttribute('data-tag')] = tag.getAttribute('data-state');
+                const allTags = document.querySelectorAll('.tag'); // 모든 태그 선택
+                allTags.forEach(tag => {
+                    const tagName = tag.getAttribute('data-tag');
+                    const tagState = tag.getAttribute('data-state');
+                    tagStates[tagName] = tagState; // 각 태그의 상태 저장
                 });
-                localStorage.setItem('tagStates', JSON.stringify(tagStates));
+                localStorage.setItem('tagStates', JSON.stringify(tagStates)); // 상태를 localStorage에 저장
             }
 
             // 로컬스토리지에서 태그 상태 불러오기
             function loadTagsFromLocalStorage() {
-                const tagStates = JSON.parse(localStorage.getItem('tagStates'));
-                if (tagStates) {
-                    tags.forEach(tag => {
-                        const state = tagStates[tag.getAttribute('data-tag')];
-                        if (state) {
-                            tag.setAttribute('data-state', state);
-                            updateTagStyles(tag);
-                        }
-                    });
-                }
+                const savedStates = JSON.parse(localStorage.getItem('tagStates')) || {};
+                
+                // 기존 태그 상태 복원
+                Object.entries(savedStates).forEach(([tagName, state]) => {
+                    const existingTag = document.querySelector(`.tag[data-tag="${tagName}"]:not(.gentags)`); // 기존 태그만 선택
+                    if (existingTag) {
+                        existingTag.setAttribute('data-state', state); // 기존 태그 상태 설정
+                        updateTagStyles(existingTag); // 스타일 업데이트
+                    } else {
+                        createNewTag(tagName); // 사전 생성된 태그가 아닌 경우에만 생성
+                        const newTag = document.querySelector(`.tag[data-tag="${tagName}"].gentags`);
+                        newTag.setAttribute('data-state', state); // 상태 설정
+                        updateTagStyles(newTag); // 스타일 업데이트
+                    }
+                });
             }
+
+            // 페이지 로드 시 상태 복원
+            window.addEventListener('load', loadTagsFromLocalStorage);
 
             // 프리셋 업데이트
             function updatePresetDropdown() {
@@ -402,8 +570,11 @@
                 }
 
                 presets[name] = {};
-                tags.forEach(tag => {
-                    presets[name][tag.getAttribute('data-tag')] = tag.getAttribute('data-state');
+                const allTags = document.querySelectorAll('.tag'); // 모든 태그 선택
+                allTags.forEach(tag => {
+                    presets[name][tag.getAttribute('data-tag')] = {
+                        state: tag.getAttribute('data-state'), // 태그의 상태 저장
+                    };
                 });
 
                 localStorage.setItem('presets', JSON.stringify(presets));
@@ -422,11 +593,18 @@
                 const presets = JSON.parse(localStorage.getItem('presets')) || {};
                 const preset = presets[presetName];
                 if (preset) {
-                    tags.forEach(tag => {
-                        const state = preset[tag.getAttribute('data-tag')];
-                        if (state) {
-                            tag.setAttribute('data-state', state);
-                            updateTagStyles(tag);
+                    // 태그 초기화
+                    tagContainer.innerHTML = ''; // gentags 클래스가 있는 태그 초기화
+                    Object.entries(preset).forEach(([tagName, tagData]) => {
+                        const existingTag = document.querySelector(`.tag[data-tag="${tagName}"]:not(.gentags)`); // 기존 태그 상태 복원
+                        if (existingTag) {
+                            existingTag.setAttribute('data-state', tagData.state); // 상태 설정
+                            updateTagStyles(existingTag); // 스타일 업데이트
+                        } else {
+                            createNewTag(tagName);
+                            const newTag = document.querySelector(`.tag[data-tag="${tagName}"].gentags`);
+                            newTag.setAttribute('data-state', tagData.state); // 상태 설정
+                            updateTagStyles(newTag); // 스타일 업데이트
                         }
                     });
                 }
@@ -448,11 +626,9 @@
 
             // 초기화 버튼 클릭 이벤트
             document.getElementById('resetBtn').addEventListener('click', function() {
-                tags.forEach(tag => {
-                    tag.setAttribute('data-state', 'none');
-                    updateTagStyles(tag);
-                });
-                localStorage.removeItem('tagStates');
+                // 드롭다운으로 생성된 태그만 초기화
+                tagContainer.innerHTML = '';
+                localStorage.removeItem('tagStates'); // 태그 상태 초기화
                 location.reload();
             });
 
@@ -461,16 +637,17 @@
                 const baseUrl = 'https://hitomi.la/search.html?';
                 let query = '';
                 let hasSelectedTag = false; // 태그 선택 여부 확인 변수
+                const allTags = document.querySelectorAll('.tag'); // 모든 태그 선택
 
-                tags.forEach(tag => {
+                allTags.forEach(tag => {
                     const state = tag.getAttribute('data-state');
                     const tagName = tag.getAttribute('data-tag');
                     if (state === 'include') {
                         query += `${tagName}%20`;
-                        hasSelectedTag = true; // 'include' 상태의 태그가 있음을 확인
+                        hasSelectedTag = true;
                     } else if (state === 'exclude') {
                         query += `-${tagName}%20`;
-                        hasSelectedTag = true; // 'exclude' 상태의 태그가 있음을 확인
+                        hasSelectedTag = true;
                     }
                 });
 
@@ -479,13 +656,12 @@
                     return;
                 }
 
-                query = query.slice(0, -3); // 마지막 '%20' 제거
-                const searchUrl = baseUrl + query;
-                window.open(searchUrl, '_blank');
+                query = query.slice(0, -3); // 마지막 %20 제거
+                window.open(`${baseUrl}${query}`, '_blank'); // 새로운 탭에서 검색
             });
-            // 초기 로드
             loadTagsFromLocalStorage();
             updatePresetDropdown();
+
         });
 
     </script>
